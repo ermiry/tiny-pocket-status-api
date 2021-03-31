@@ -7,7 +7,7 @@ sudo docker run \
   -it \
   --name status --rm \
   -p 5000:5000 --net ermiry \
-  -v /home/ermiry/Documents/Work/pocket-status:/home/pocket \
+  -v /home/ermiry/Documents/ermiry/Projects/tiny-pocket-status-api:/home/pocket \
   -e RUNTIME=development \
   -e PORT=5000 \
   -e CERVER_RECEIVE_BUFFER_SIZE=4096 -e CERVER_TH_THREADS=4 \
