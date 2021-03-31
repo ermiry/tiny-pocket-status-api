@@ -1,23 +1,14 @@
-ARG CMONGO_VERSION=1.0b-3
-ARG CERVER_VERSION=2.0b-30
+ARG CERVER_VERSION=2.0b-32
 
-ARG BUILD_DEPS='ca-certificates git libssl-dev libcurl4-openssl-dev'
-ARG RUNTIME_DEPS='ca-certificates libssl-dev libcurl4-openssl-dev'
+ARG BUILD_DEPS='wget unzip libssl-dev'
+ARG RUNTIME_DEPS='libssl-dev'
 
-FROM ermiry/mongoc:builder as builder
+FROM gcc as builder
 
 WORKDIR /opt
 
 ARG BUILD_DEPS
 RUN apt-get update && apt-get install -y ${BUILD_DEPS}
-
-# build cmongo with test flags
-ARG CMONGO_VERSION
-RUN mkdir /opt/cmongo && cd /opt/cmongo \
-    && wget -q --no-check-certificate https://github.com/ermiry-com/cmongo/archive/${CMONGO_VERSION}.zip \
-    && unzip ${CMONGO_VERSION}.zip \
-    && cd cmongo-${CMONGO_VERSION} \
-    && make TYPE=test -j4 && make TYPE=test install
 
 # build cerver with test flags
 ARG CERVER_VERSION
@@ -35,15 +26,10 @@ COPY . .
 RUN make TYPE=test -j4
 
 ############
-FROM ermiry/mongoc:latest
+FROM ubuntu:bionic
 
 ARG RUNTIME_DEPS
 RUN apt-get update && apt-get install -y ${RUNTIME_DEPS}
-
-# cmongo
-ARG CMONGO_VERSION
-COPY --from=builder /opt/cmongo/cmongo-${CMONGO_VERSION}/bin/libcmongo.so /usr/local/lib/
-COPY --from=builder /opt/cmongo/cmongo-${CMONGO_VERSION}/include/cmongo /usr/local/include/cmongo
 
 # cerver
 ARG CERVER_VERSION
