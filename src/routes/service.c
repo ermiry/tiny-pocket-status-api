@@ -23,3 +23,13 @@ void pocket_version_handler (
 	(void) http_response_send (current_version, http_receive);
 
 }
+
+// GET *
+void pocket_catch_all_handler (
+	const HttpReceive *http_receive,
+	const HttpRequest *request
+) {
+
+	http_response_send (catch_all, http_receive);
+
+}
